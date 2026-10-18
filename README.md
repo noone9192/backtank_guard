@@ -13,4 +13,4 @@ By default, right-clicking a block with a backtank in your hand places it on the
 
 - Client-side only.
 - Requires Create 6.x on NeoForge 1.21.1.
-- Work in progress.
+- WIP.
