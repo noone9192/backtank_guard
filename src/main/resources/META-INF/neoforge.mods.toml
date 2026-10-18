@@ -1,0 +1,32 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "backtank_guard"
+version = "1.0.0"
+displayName = "Create: Backtank guard"
+description = '''
+adds a option to not stop sprinting and only placing backtanks while crouching.
+'''
+
+[[dependencies.backtank_guard]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.backtank_guard]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,1.22)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.backtank_guard]]
+modId = "create"
+type = "required"
+versionRange = "[6.0,)"
+ordering = "AFTER"
+side = "CLIENT"
