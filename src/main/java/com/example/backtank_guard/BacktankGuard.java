@@ -3,29 +3,25 @@ package com.example.backtank_guard;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.content.equipment.armor.BacktankItem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.options.controls.ControlsScreen;
-import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.Event;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -37,10 +33,21 @@ public class BacktankGuard{
     private boolean alwaysSprint = false;
 
     public BacktankGuard(ModContainer modContainer) {
-        NeoForge.EVENT_BUS.addListener(this::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(this::onScreenInit);
         NeoForge.EVENT_BUS.addListener(this::onClientTick);
+        NeoForge.EVENT_BUS.addListener(this::onInteract);
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.SPEC);
+    }
+
+    private void onInteract(InputEvent.InteractionKeyMappingTriggered event) {
+        LOGGER.info("BTG use: {} hand: {}", event.isUseItem(), event.getHand());
+        HitResult hit = Minecraft.getInstance().hitResult;
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+        if (event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND && isHoldingTargetItem(Minecraft.getInstance().player) && !player.isCrouching() && hit != null && hit.getType() == HitResult.Type.BLOCK) {
+            event.setCanceled(true);
+            Minecraft.getInstance().gameMode.useItem(player, InteractionHand.MAIN_HAND);
+        }
     }
 
     private void onScreenInit(ScreenEvent.Init.Post event) {
@@ -66,12 +73,6 @@ public class BacktankGuard{
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && alwaysSprint == true && player.input.forwardImpulse > 0) {
             mc.player.setSprinting(true);
-        }
-    }
-
-    private void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (isHoldingTargetItem(event.getEntity()) && !event.getEntity().isShiftKeyDown()) {
-            event.setUseItem(TriState.FALSE);
         }
     }
 
