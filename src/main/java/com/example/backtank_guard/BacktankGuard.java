@@ -57,6 +57,7 @@ public class BacktankGuard{
                     Button toggle = Button.builder(sprintText(), b -> {
                         Config.ALWAYS_SPRINT.set(true);
                         Config.ALWAYS_SPRINT.save();
+                        alwaysSprint = !alwaysSprint;
                         b.setMessage(sprintText());
                             })
                             .width(150)
