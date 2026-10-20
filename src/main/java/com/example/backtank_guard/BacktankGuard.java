@@ -55,7 +55,8 @@ public class BacktankGuard{
             for (GuiEventListener widget : event.getListenersList()) {
                 if (widget instanceof OptionsList list) {
                     Button toggle = Button.builder(sprintText(), b -> {
-                        alwaysSprint = !alwaysSprint;
+                        Config.ALWAYS_SPRINT.set(true);
+                        Config.ALWAYS_SPRINT.save();
                         b.setMessage(sprintText());
                             })
                             .width(150)
@@ -73,6 +74,7 @@ public class BacktankGuard{
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null && alwaysSprint == true && player.input.forwardImpulse > 0) {
             mc.player.setSprinting(true);
+
         }
     }
 
